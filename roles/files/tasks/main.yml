@@ -1,0 +1,50 @@
+---
+- name: Template UNA config files
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/templates/cnf/{{ item }}"
+    dest: "{{ una_root }}/cnf/{{ item }}"
+    mode: '0644'
+  loop:
+    - db_addon.sql
+    - apache-ssl.conf
+    - mysqld.cnf
+    - phpmyadmin.inc.php
+    - jot-ssl-config.json
+    - loki-config.yml
+    - promtail-config.yml
+    - victoriametrics-promscrape.yml
+    - grafana/dashboards/una-dashboard.json
+    - grafana/provisioning/dashboards/una-dashboard.yaml
+    - grafana/provisioning/datasources/loki.yaml
+    - grafana/provisioning/datasources/victoriametrics.yaml
+
+- name: Template NEO customization files
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/templates/neo/{{ item }}"
+    dest: "{{ una_root }}/neo/{{ item }}"
+    mode: '0644'
+  loop:
+    - images_allowlist.js
+    - static.js
+    - global.css
+    - settings.js
+    - maintenance.js
+
+- name: Template docker-compose files
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/templates/{{ item }}"
+    dest: "{{ una_root }}/{{ item }}"
+    mode: '0644'
+  loop:
+    - docker-compose.base.yml
+    - docker-compose.base-ssl.yml
+    - docker-compose.jot.yml
+    - docker-compose.una.yml
+    - docker-compose.una-api.yml
+    - docker-compose.db.yml
+    - docker-compose.phpmyadmin.yml
+    - docker-compose.grafana.yml
+    - docker-compose.logs.yml
+    - docker-compose.metrics.yml
+    - docker-compose.mail.yml
+    - docker-compose.neo.yml

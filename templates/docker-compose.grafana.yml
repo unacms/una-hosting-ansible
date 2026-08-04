@@ -1,0 +1,23 @@
+services:
+    grafana:
+        image: grafana/grafana:latest
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.grafana.rule=Host(`{{ host }}`) && PathPrefix(`/grafana`)"
+            - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+            - "promtail.job=grafana"
+        user: root
+        environment:
+            - GF_SECURITY_ADMIN_PASSWORD__FILE=/run/secrets/grafana_password
+            - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/etc/grafana/provisioning/dashboards/json/una-dashboard.json
+            - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s/grafana/
+            - GF_SERVER_SERVE_FROM_SUB_PATH=true
+        secrets:
+            - grafana_password
+        volumes:
+            - ./cnf/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+            - ./cnf/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+            - ./cnf/grafana/dashboards:/etc/grafana/provisioning/dashboards/json
+        networks:
+            - internal
+            - proxy

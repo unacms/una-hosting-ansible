@@ -1,0 +1,19 @@
+---
+- name: UNA host configuration
+  hosts: localhost
+  connection: local
+  become: true
+  gather_facts: true
+  # Extra vars (including secrets) are supplied by the worker via:
+  #   ansible-pull ... -e @/srv/una/.ansible-extra-vars.json
+  roles:
+    - role: bootstrap
+      tags: [bootstrap]
+    - role: ssl_prelude
+      tags: [ssl]
+    - role: files
+      tags: [files]
+    - role: env
+      tags: [env]
+    - role: compose
+      tags: [compose]

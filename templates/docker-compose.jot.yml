@@ -1,0 +1,17 @@
+services:
+    jot:
+        image: unaio/jot-server:latest
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.jot.rule=Host(`{{ host }}`) && PathPrefix(`/primus`)"
+            - "traefik.http.services.jot.loadbalancer.server.port=5000"
+            - "promtail.job=jot"
+        restart: always
+        volumes:
+            - ./www/ssl:/opt/jot-server/config/ssl
+#            - ./cnf/jot-ssl-config.json:/opt/jot-server/config/config.json
+        ports:
+            - 5000:5000
+            # - '5443:5443'
+        networks:
+            - proxy

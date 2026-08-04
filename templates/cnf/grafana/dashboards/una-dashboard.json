@@ -1,0 +1,220 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 0,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "loki",
+        "name": "Loki"
+      },
+      "fieldConfig": {"defaults":{},"overrides":[]},
+      "gridPos":{"h":8,"w":12,"x":0,"y":4},
+      "id":1,
+      "options":{"dedupStrategy":"none","enableInfiniteScrolling":false,"enableLogDetails":true,"prettifyLogMessage":false,"showCommonLabels":false,"showLabels":false,"showTime":false,"sortOrder":"Descending","wrapLogMessage":false},
+      "pluginVersion":"12.2.1",
+      "targets":[{"datasource":{"type":"loki","name":"Loki"},"direction":"backward","editorMode":"builder","expr":"{job=\"una\"} |= `PHP Fatal error`","queryType":"range","refId":"A"}],
+      "title":"PHP Errors",
+      "type":"logs"
+    },
+    {
+      "datasource": {"type":"loki","name":"Loki"},
+      "fieldConfig":{"defaults":{},"overrides":[]},
+      "gridPos":{"h":8,"w":12,"x":12,"y":4},
+      "id":5,
+      "options":{"dedupStrategy":"none","enableInfiniteScrolling":false,"enableLogDetails":true,"prettifyLogMessage":false,"showCommonLabels":false,"showLabels":false,"showTime":false,"sortOrder":"Descending","wrapLogMessage":false},
+      "targets":[{"direction":"backward","editorMode":"builder","expr":"{job=\"una\"} | detected_level=`error` |= ``","queryType":"range","refId":"A"}],
+      "title":"Webserver (errors)",
+      "type":"logs"
+    },
+    {
+      "datasource": {"type":"loki","name":"Loki"},
+      "fieldConfig":{"defaults":{},"overrides":[]},
+      "gridPos":{"h":8,"w":12,"x":0,"y":12},
+      "id":3,
+      "options":{"dedupStrategy":"none","enableInfiniteScrolling":false,"enableLogDetails":true,"prettifyLogMessage":false,"showCommonLabels":false,"showLabels":false,"showTime":false,"sortOrder":"Descending","wrapLogMessage":false},
+      "targets":[{"direction":"backward","editorMode":"builder","expr":"{job=\"neo\"}","queryType":"range","refId":"A"}],
+      "title":"NEO",
+      "type":"logs"
+    },
+    {
+      "datasource": {"type":"loki","name":"Loki"},
+      "fieldConfig":{"defaults":{},"overrides":[]},
+      "gridPos":{"h":8,"w":12,"x":12,"y":12},
+      "id":2,
+      "options":{"dedupStrategy":"none","enableInfiniteScrolling":false,"enableLogDetails":true,"prettifyLogMessage":false,"showCommonLabels":false,"showLabels":false,"showTime":false,"sortOrder":"Descending","wrapLogMessage":false},
+      "targets":[{"direction":"backward","editorMode":"builder","expr":"{job=\"una\"}","queryType":"range","refId":"A"}],
+      "title":"Webserver (all)",
+      "type":"logs"
+    },
+    {
+      "datasource": {"type":"loki","name":"Loki"},
+      "fieldConfig":{"defaults":{},"overrides":[]},
+      "gridPos":{"h":8,"w":12,"x":0,"y":20},
+      "id":4,
+      "options":{"dedupStrategy":"none","enableInfiniteScrolling":false,"enableLogDetails":true,"prettifyLogMessage":false,"showCommonLabels":false,"showLabels":false,"showTime":false,"sortOrder":"Descending","wrapLogMessage":false},
+      "targets":[{"direction":"backward","editorMode":"builder","expr":"{job=\"jot\"}","queryType":"range","refId":"A"}],
+      "title":"Jot",
+      "type":"logs"
+    },
+    {
+      "datasource": {"type":"loki","name":"Loki"},
+      "fieldConfig":{"defaults":{},"overrides":[]},
+      "gridPos":{"h":8,"w":12,"x":12,"y":20},
+      "id":6,
+      "options":{"dedupStrategy":"none","enableInfiniteScrolling":false,"enableLogDetails":true,"prettifyLogMessage":false,"showCommonLabels":false,"showLabels":false,"showTime":false,"sortOrder":"Descending","wrapLogMessage":false},
+      "targets":[{"direction":"backward","editorMode":"builder","expr":"{job=\"mail\"}","queryType":"range","refId":"A"}],
+      "title":"Mail",
+      "type":"logs"
+    },
+    {
+      "datasource": {"type":"loki","name":"Loki"},
+      "fieldConfig":{"defaults":{},"overrides":[]},
+      "gridPos":{"h":8,"w":12,"x":0,"y":28},
+      "id":7,
+      "options":{"dedupStrategy":"none","enableInfiniteScrolling":false,"enableLogDetails":true,"prettifyLogMessage":false,"showCommonLabels":false,"showLabels":false,"showTime":false,"sortOrder":"Descending","wrapLogMessage":false},
+      "targets":[{"direction":"backward","editorMode":"builder","expr":"{job=\"mysql\"}","queryType":"range","refId":"A"}],
+      "title":"MySQL",
+      "type":"logs"
+    },
+    {
+      "datasource": {"type":"prometheus","name":"VictoriaMetrics"},
+      "fieldConfig":{"defaults":{"unit":"percent","min":0,"max":100},"overrides":[{"matcher":{"id":"byFrameRefID","options":"A"},"properties":[{"id":"displayName","value":"CPU used"}]}]},
+      "gridPos":{"h":4,"w":4,"x":0,"y":0},
+      "id":8,
+      "options":{"legend":{"displayMode":"list","placement":"bottom","showLegend":true},"tooltip":{"mode":"single","sort":"none"}},
+      "targets":[{"datasource":{"type":"prometheus","name":"VictoriaMetrics"},"editorMode":"code","expr":"100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)","legendFormat":"CPU used","range":true,"refId":"A"}],
+      "title":"Server CPU",
+      "type":"timeseries"
+    },
+    {
+      "datasource": {"type":"prometheus","name":"VictoriaMetrics"},
+      "fieldConfig":{"defaults":{"unit":"percent","min":0,"max":100},"overrides":[{"matcher":{"id":"byFrameRefID","options":"A"},"properties":[{"id":"displayName","value":"Memory used"}]}]},
+      "gridPos":{"h":4,"w":4,"x":4,"y":0},
+      "id":9,
+      "options":{"legend":{"displayMode":"list","placement":"bottom","showLegend":true},"tooltip":{"mode":"single","sort":"none"}},
+      "targets":[{"datasource":{"type":"prometheus","name":"VictoriaMetrics"},"editorMode":"code","expr":"100 * (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)","legendFormat":"Memory used","range":true,"refId":"A"}],
+      "title":"Server Memory",
+      "type":"timeseries"
+    },
+    {
+      "datasource": {"type":"prometheus","name":"VictoriaMetrics"},
+      "fieldConfig":{"defaults":{"unit":"percent","min":0,"max":100},"overrides":[{"matcher":{"id":"byFrameRefID","options":"A"},"properties":[{"id":"displayName","value":"Root filesystem used"}]}]},
+      "gridPos":{"h":4,"w":4,"x":8,"y":0},
+      "id":10,
+      "options":{"legend":{"displayMode":"list","placement":"bottom","showLegend":true},"tooltip":{"mode":"single","sort":"none"}},
+      "targets":[{"datasource":{"type":"prometheus","name":"VictoriaMetrics"},"editorMode":"code","expr":"100 * (1 - node_filesystem_avail_bytes{mountpoint=\"/\",fstype!~\"tmpfs|overlay|squashfs\"} / node_filesystem_size_bytes{mountpoint=\"/\",fstype!~\"tmpfs|overlay|squashfs\"})","legendFormat":"Root filesystem used","range":true,"refId":"A"}],
+      "title":"Root Filesystem",
+      "type":"timeseries"
+    },
+    {
+      "datasource": {"type":"prometheus","name":"VictoriaMetrics"},
+      "fieldConfig":{"defaults":{"unit":"none","min":0},"overrides":[{"matcher":{"id":"byFrameRefID","options":"A"},"properties":[{"id":"displayName","value":"Load 1m"}]},{"matcher":{"id":"byFrameRefID","options":"B"},"properties":[{"id":"displayName","value":"Load 5m"}]},{"matcher":{"id":"byFrameRefID","options":"C"},"properties":[{"id":"displayName","value":"Load 15m"}]}]},
+      "gridPos":{"h":4,"w":4,"x":12,"y":0},
+      "id":11,
+      "options":{"legend":{"displayMode":"list","placement":"bottom","showLegend":true},"tooltip":{"mode":"single","sort":"none"}},
+      "targets":[
+        {"datasource":{"type":"prometheus","name":"VictoriaMetrics"},"editorMode":"code","expr":"node_load1","legendFormat":"Load 1m","range":true,"refId":"A"},
+        {"datasource":{"type":"prometheus","name":"VictoriaMetrics"},"editorMode":"code","expr":"node_load5","legendFormat":"Load 5m","range":true,"refId":"B"},
+        {"datasource":{"type":"prometheus","name":"VictoriaMetrics"},"editorMode":"code","expr":"node_load15","legendFormat":"Load 15m","range":true,"refId":"C"}
+      ],
+      "title":"Load Average",
+      "type":"timeseries"
+    },
+    {
+      "datasource": {"type":"prometheus","name":"VictoriaMetrics"},
+      "fieldConfig":{"defaults":{"unit":"none","min":0},"overrides":[{"matcher":{"id":"byFrameRefID","options":"A"},"properties":[{"id":"displayName","value":"Running processes"}]},{"matcher":{"id":"byFrameRefID","options":"B"},"properties":[{"id":"displayName","value":"Blocked processes"}]}]},
+      "gridPos":{"h":4,"w":4,"x":16,"y":0},
+      "id":12,
+      "options":{"legend":{"displayMode":"list","placement":"bottom","showLegend":true},"tooltip":{"mode":"single","sort":"none"}},
+      "targets":[
+        {"datasource":{"type":"prometheus","name":"VictoriaMetrics"},"editorMode":"code","expr":"node_procs_running","legendFormat":"running processes","range":true,"refId":"A"},
+        {"datasource":{"type":"prometheus","name":"VictoriaMetrics"},"editorMode":"code","expr":"node_procs_blocked","legendFormat":"blocked processes","range":true,"refId":"B"}
+      ],
+      "title":"Node Stat",
+      "type":"timeseries"
+    },
+    {
+      "datasource": {"type":"prometheus","name":"VictoriaMetrics"},
+      "fieldConfig":{"defaults":{"unit":"short","min":0},"overrides":[{"matcher":{"id":"byFrameRefID","options":"A"},"properties":[{"id":"displayName","value":"Context switches/sec"}]},{"matcher":{"id":"byFrameRefID","options":"B"},"properties":[{"id":"displayName","value":"Interrupts/sec"}]}]},
+      "gridPos":{"h":4,"w":4,"x":20,"y":0},
+      "id":13,
+      "options":{"legend":{"displayMode":"list","placement":"bottom","showLegend":true},"tooltip":{"mode":"single","sort":"none"}},
+      "targets":[
+        {"datasource":{"type":"prometheus","name":"VictoriaMetrics"},"editorMode":"code","expr":"rate(node_context_switches_total[5m])","legendFormat":"Context switches/sec","range":true,"refId":"A"},
+        {"datasource":{"type":"prometheus","name":"VictoriaMetrics"},"editorMode":"code","expr":"rate(node_intr_total[5m])","legendFormat":"Interrupts/sec","range":true,"refId":"B"}
+      ],
+      "title":"System Activity",
+      "type":"timeseries"
+    },
+    {
+      "datasource": {"type":"prometheus","name":"VictoriaMetrics"},
+      "fieldConfig":{"defaults":{"unit":"percent","min":0},"overrides":[]},
+      "gridPos":{"h":4,"w":6,"x":12,"y":28},
+      "id":14,
+      "options":{"legend":{"displayMode":"list","placement":"bottom","showLegend":true},"tooltip":{"mode":"single","sort":"none"}},
+      "targets":[{"datasource":{"type":"prometheus","name":"VictoriaMetrics"},"editorMode":"code","expr":"sum by (name) (rate(container_cpu_usage_seconds_total{name!=\"\"}[5m])) * 100","legendFormat":"{{ '{{name}}' }}","range":true,"refId":"A"}],
+      "title":"Container CPU",
+      "type":"timeseries"
+    },
+    {
+      "datasource": {"type":"prometheus","name":"VictoriaMetrics"},
+      "fieldConfig":{"defaults":{"unit":"bytes","min":0},"overrides":[]},
+      "gridPos":{"h":4,"w":6,"x":18,"y":28},
+      "id":15,
+      "options":{"legend":{"displayMode":"list","placement":"bottom","showLegend":true},"tooltip":{"mode":"single","sort":"none"}},
+      "targets":[{"datasource":{"type":"prometheus","name":"VictoriaMetrics"},"editorMode":"code","expr":"container_memory_working_set_bytes{name!=\"\"}","legendFormat":"{{ '{{name}}' }}","range":true,"refId":"A"}],
+      "title":"Container Memory Working Set",
+      "type":"timeseries"
+    },
+    {
+      "datasource": {"type":"prometheus","name":"VictoriaMetrics"},
+      "fieldConfig":{"defaults":{"unit":"bytes","min":0},"overrides":[]},
+      "gridPos":{"h":4,"w":6,"x":12,"y":32},
+      "id":16,
+      "options":{"legend":{"displayMode":"list","placement":"bottom","showLegend":true},"tooltip":{"mode":"single","sort":"none"}},
+      "targets":[{"datasource":{"type":"prometheus","name":"VictoriaMetrics"},"editorMode":"code","expr":"container_memory_usage_bytes{name!=\"\"}","legendFormat":"{{ '{{name}}' }}","range":true,"refId":"A"}],
+      "title":"Container Memory Usage",
+      "type":"timeseries"
+    },
+    {
+      "datasource": {"type":"prometheus","name":"VictoriaMetrics"},
+      "fieldConfig":{"defaults":{"unit":"bytes","min":0},"overrides":[]},
+      "gridPos":{"h":4,"w":6,"x":18,"y":32},
+      "id":17,
+      "options":{"legend":{"displayMode":"list","placement":"bottom","showLegend":true},"tooltip":{"mode":"single","sort":"none"}},
+      "targets":[{"datasource":{"type":"prometheus","name":"VictoriaMetrics"},"editorMode":"code","expr":"container_spec_memory_limit_bytes{name!=\"\"}","legendFormat":"{{ '{{name}}' }}","range":true,"refId":"A"}],
+      "title":"Container Memory Limit",
+      "type":"timeseries"
+    }
+  ],
+  "preload": false,
+  "refresh": "30s",
+  "schemaVersion": 42,
+  "tags": [],
+  "templating":{"list":[]},
+  "time":{"from":"now-6h","to":"now"},
+  "timepicker":{},
+  "timezone":"browser",
+  "title":"Logs Dash",
+  "uid":"adkg5zp",
+  "version":10
+}

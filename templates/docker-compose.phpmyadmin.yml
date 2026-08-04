@@ -1,0 +1,19 @@
+services:
+    phpmyadmin:
+        image: phpmyadmin
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.phpmyadmin.rule=Host(`{{ host }}`) && PathPrefix(`/phpmyadmin`)"
+            - "traefik.http.routers.phpmyadmin.middlewares=phpmyadmin-stripprefix"
+            - "traefik.http.middlewares.phpmyadmin-stripprefix.stripprefix.prefixes=/phpmyadmin"
+        restart: always
+        environment:
+#            - PMA_HOST=mysql
+#            - PMA_USER=root
+#            - PMA_PASSWORD=root
+            - UPLOAD_LIMIT=200M 
+        volumes:
+            - ./cnf/phpmyadmin.inc.php:/etc/phpmyadmin/config.user.inc.php
+        networks:
+            - proxy
+            - internal

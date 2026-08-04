@@ -1,0 +1,11 @@
+{
+	"port":5443,
+	"domains":["*"],
+	"root":"/opt/jot-server/config/ssl",
+	"cert":"fullchain.pem", 
+	"key":"privkey.pem",
+	"secret": "",
+	"transformer":"sockjs",	
+	"mode":"development",
+	"log":"log.log"
+}

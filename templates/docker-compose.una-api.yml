@@ -1,0 +1,35 @@
+services:
+    una-api:
+        image: unaio/una:latest
+        labels:
+            - "promtail.job=una"
+            - "traefik.enable=true"
+            - "traefik.http.routers.una-api.rule=Host(`{{ host }}`) && PathPrefix(`/una`)"
+            - "traefik.http.services.una-api.loadbalancer.server.port=80"
+        restart: always
+        environment:
+            UNA_HTTP_HOST: "${UNA_HTTP_HOST:-{{ host }}}"
+            UNA_HTTP_PATH: "una/"
+            UNA_DB_HOST: "mysql"
+            UNA_DB_NAME: "una"
+            UNA_DB_USER: "una"
+            UNA_DB_PWD_FILE: /run/secrets/mysql_una_password
+            UNA_SITE_TITLE: "${UNA_SITE_TITLE:-UNA}"
+            UNA_SITE_EMAIL: "${UNA_SITE_EMAIL:-admin@example.com}"
+            UNA_ADMIN_EMAIL: "${UNA_ADMIN_EMAIL:-admin@example.com}"
+            UNA_ADMIN_PWD: "${UNA_ADMIN_PWD:-admin}"
+            UNA_KEY: "${UNA_KEY}"
+            UNA_SECRET: "${UNA_SECRET}"
+            UNA_ZIP_DOWNLOAD_URL: "${UNA_ZIP_DOWNLOAD_URL}"
+            UNA_ZIP_FOLDER: "${UNA_ZIP_FOLDER}"
+        secrets:
+            - mysql_una_password
+        volumes:
+            - ./www:/var/www
+            - ./cnf/db_addon.sql:/tmp/addon.sql
+        depends_on:
+            mysql:
+                condition: service_healthy
+        networks:
+            - internal
+            - proxy

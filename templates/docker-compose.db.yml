@@ -1,0 +1,25 @@
+services:
+    mysql:
+        image: mariadb:latest
+        labels:
+            - "promtail.job=mysql"
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
+            MYSQL_USER: 'una'
+            MYSQL_PASSWORD_FILE: /run/secrets/mysql_una_password
+            MYSQL_DATABASE: 'una'
+        secrets:
+            - mysql_root_password
+            - mysql_una_password
+        volumes:
+            - mysqldata:/var/lib/mysql
+            - ./cnf/db_dump.sql:/docker-entrypoint-initdb.d/db_dump.sql
+            - ./cnf/mysqld.cnf:/etc/mysql/conf.d/mysqld.cnf
+        healthcheck:
+            test: [ "CMD-SHELL", "test -f /run/secrets/mysql_root_password && (exit | mariadb -p$(cat /run/secrets/mysql_root_password))" ]
+            interval: 5s
+            timeout: 20s
+            retries: 30
+        networks:
+            - internal

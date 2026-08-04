@@ -1,0 +1,58 @@
+services:
+    traefik:
+        image: traefik:v3.6
+        labels:
+            - "traefik.enable=true"
+
+            # Enable self‑routing
+            - "traefik.enable=true"
+
+            # Dashboard router
+            - "traefik.http.routers.traefik-dashboard.rule=Host(`{{ host }}`) && PathPrefix(`/traefik`)"
+            - "traefik.http.routers.traefik-dashboard.service=api@internal"
+
+            # Basic‑auth middleware (TODO: use UNA studio pwd)
+            - "traefik.http.middlewares.dashboard-auth.basicauth.users=admin:$$apr1$$yhaWa.pm$$qX6ZBO48oAcEyDYNkT1cb/"
+            - "traefik.http.routers.traefik-dashboard.middlewares=dashboard-auth@docker"
+        restart: always
+        ports:
+            - "80:80"
+        networks:
+            - proxy
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        command:
+            # EntryPoints
+            - "--entrypoints.web.address=:80"
+
+            # Providers 
+            - "--providers.docker=true"
+            - "--providers.docker.exposedbydefault=false"
+            - "--providers.docker.network=una_proxy"
+
+            # API & Dashboard 
+            - "--api.basePath=/traefik"
+            - "--api.dashboard=true"
+            - "--api.insecure=false"
+
+            # Observability 
+            - "--log.level=INFO"
+            - "--accesslog=true"
+            - "--metrics.prometheus=true"
+
+secrets:
+  mysql_root_password:
+    file: .sec_mysql_root_password
+  mysql_una_password:
+    file: .sec_mysql_una_password
+  grafana_password:
+    file: .sec_grafana_password
+
+volumes:
+  mysqldata: {}
+
+networks:
+  proxy:
+  external:
+  internal:
+    internal: true

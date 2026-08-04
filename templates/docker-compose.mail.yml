@@ -1,0 +1,15 @@
+services:
+    mail:
+        image: namshi/smtp
+        labels:
+            - "promtail.job=mail"
+        restart: unless-stopped
+        volumes:
+            - ./cnf/dkim_config:/etc/exim4/_docker_additional_macros:ro
+            - ./domain.key:/etc/exim4/domain.key:ro
+        environment:
+            MAILNAME: "{{ host }}"
+            RELAY_NETWORKS: "172.0.0.0/8"
+        networks:
+            - external
+            - internal

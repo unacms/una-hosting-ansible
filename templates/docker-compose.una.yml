@@ -1,0 +1,39 @@
+services:
+    una:
+        image: unaio/una:latest
+        labels:
+            - "promtail.job=una"
+            - "traefik.enable=true"
+            - "traefik.http.routers.una.rule=Host(`{{ host }}`) && PathPrefix(`/`)"
+            # redirect fix for phpmyadmin
+            - 'traefik.http.middlewares.pma-redirect.redirectregex.regex=^(https?://[^/]+)/index\.php\?route=/$'
+            - 'traefik.http.middlewares.pma-redirect.redirectregex.replacement=$1/phpmyadmin/'
+            - "traefik.http.middlewares.pma-redirect.redirectregex.permanent=true"
+            - "traefik.http.routers.una.middlewares=pma-redirect"
+        restart: always
+        environment:
+            UNA_HTTP_HOST: "${UNA_HTTP_HOST:-{{ host }}}"
+            UNA_DB_HOST: "mysql"
+            UNA_DB_NAME: "una"
+            UNA_DB_USER: "una"
+            UNA_DB_PWD_FILE: /run/secrets/mysql_una_password
+            UNA_SITE_TITLE: "${UNA_SITE_TITLE:-UNA}"
+            UNA_SITE_EMAIL: "${UNA_SITE_EMAIL:-admin@example.com}"
+            UNA_ADMIN_EMAIL: "${UNA_ADMIN_EMAIL:-admin@example.com}"
+            UNA_ADMIN_PWD: "${UNA_ADMIN_PWD:-admin}"
+            UNA_KEY: "${UNA_KEY}"
+            UNA_SECRET: "${UNA_SECRET}"
+            UNA_ZIP_DOWNLOAD_URL: "${UNA_ZIP_DOWNLOAD_URL}"
+            UNA_ZIP_FOLDER: "${UNA_ZIP_FOLDER}"
+        secrets:
+            - mysql_una_password
+        volumes:
+            # - ./cnf/apache-ssl.conf:/etc/apache2/sites-enabled/000-default.conf
+            - ./www:/var/www
+            - ./cnf/db_addon.sql:/tmp/addon.sql
+        depends_on:
+            mysql:
+                condition: service_healthy
+        networks:
+            - internal
+            - proxy

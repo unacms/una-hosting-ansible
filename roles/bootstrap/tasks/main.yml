@@ -1,0 +1,86 @@
+---
+- name: Ensure swapfile exists
+  block:
+    - name: Check if swapfile is active
+      ansible.builtin.command: swapon --show
+      register: swapon_show
+      changed_when: false
+
+    - name: Create and enable 4G swapfile
+      when: "'/swapfile' not in swapon_show.stdout"
+      block:
+        - ansible.builtin.command: fallocate -l 4G /swapfile
+        - ansible.builtin.file:
+            path: /swapfile
+            mode: '0600'
+        - ansible.builtin.command: mkswap /swapfile
+        - ansible.builtin.command: swapon /swapfile
+        - ansible.builtin.lineinfile:
+            path: /etc/fstab
+            line: '/swapfile none swap sw 0 0'
+            state: present
+
+- name: Set vm.swappiness
+  ansible.builtin.sysctl:
+    name: vm.swappiness
+    value: '30'
+    state: present
+    sysctl_set: true
+    reload: true
+
+- name: Install certbot
+  ansible.builtin.apt:
+    name: certbot
+    state: present
+    update_cache: true
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+
+- name: Install docker.io
+  ansible.builtin.apt:
+    name: docker.io
+    state: present
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+
+- name: Ensure docker is started and enabled
+  ansible.builtin.systemd:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Install docker-compose binary
+  ansible.builtin.get_url:
+    url: "https://github.com/docker/compose/releases/latest/download/docker-compose-{{ ansible_system | lower }}-{{ ansible_architecture }}"
+    dest: /usr/local/bin/docker-compose
+    mode: '0755'
+    force: false
+
+- name: Create UNA directory tree
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - "{{ una_root }}"
+    - "{{ una_root }}/neo"
+    - "{{ una_root }}/cnf/grafana/dashboards"
+    - "{{ una_root }}/cnf/grafana/provisioning/dashboards"
+    - "{{ una_root }}/cnf/grafana/provisioning/datasources"
+    - "{{ una_root }}/www/html"
+
+- name: Set www ownership for UNA container user
+  ansible.builtin.file:
+    path: "{{ una_root }}/www"
+    state: directory
+    owner: '2483'
+    group: '2483'
+    recurse: true
+
+- name: Ensure db_dump.sql exists
+  ansible.builtin.file:
+    path: "{{ una_root }}/cnf/db_dump.sql"
+    state: touch
+    mode: '0644'
+    modification_time: preserve
+    access_time: preserve

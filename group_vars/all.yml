@@ -1,0 +1,17 @@
+---
+# Defaults for optional template vars (overridden by /srv/una/.ansible-extra-vars.yml)
+logo: ''
+splash_text_component: ''
+join_text_component: ''
+global_css_component: ''
+soketi_secret: ''
+neoUnaApiKey: ''
+proto: http
+port: 80
+host: localhost
+ssl: false
+una_action: deploy
+docker_compose_params: ''
+docker_compose_params_all: ''
+docker_compose_params_http: ''
+una_root: /srv/una

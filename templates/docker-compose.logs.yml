@@ -1,0 +1,23 @@
+services:
+    loki:
+        image: grafana/loki:latest
+        labels:
+            - "promtail.job=loki"
+        command: -config.file=/etc/loki/local-config.yaml
+        volumes:
+            - ./cnf/loki-config.yml:/etc/loki/local-config.yaml
+        networks:
+            - internal
+
+    promtail:
+        image: grafana/promtail:latest
+        labels:
+            - "promtail.job=promtail"
+        depends_on:
+            - loki
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+            - /var/lib/docker/containers:/var/lib/docker/containers:ro
+            - ./cnf/promtail-config.yml:/etc/promtail/config.yml
+        networks:
+            - internal

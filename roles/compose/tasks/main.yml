@@ -1,0 +1,23 @@
+---
+- name: Stop all UNA compose stacks
+  ansible.builtin.shell: "docker-compose {{ docker_compose_params_all }} down"
+  args:
+    chdir: "{{ una_root }}"
+  when: docker_compose_params_all | default('') | length > 0
+
+- name: Pull container images (retry)
+  ansible.builtin.shell: |
+    for i in {1..5}; do
+      echo "Docker pull attempt $i/5"
+      docker-compose {{ docker_compose_params }} pull --quiet --ignore-pull-failures && break
+      sleep 5
+    done || true
+  args:
+    chdir: "{{ una_root }}"
+  when: docker_compose_params | default('') | length > 0
+
+- name: Start selected compose stack
+  ansible.builtin.shell: "docker-compose {{ docker_compose_params }} up -d --quiet-pull"
+  args:
+    chdir: "{{ una_root }}"
+  when: docker_compose_params | default('') | length > 0

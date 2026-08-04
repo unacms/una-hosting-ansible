@@ -1,0 +1,14 @@
+---
+# Runs only when --tags includes ssl (enable-ssl). Brings HTTP stack up
+# before files/env refresh and SSL compose cutover.
+- name: Stop all stacks before HTTP prelude
+  ansible.builtin.shell: "docker-compose {{ docker_compose_params_all }} down"
+  args:
+    chdir: "{{ una_root }}"
+  when: docker_compose_params_all | default('') | length > 0
+
+- name: Start HTTP stack before SSL cutover
+  ansible.builtin.shell: "docker-compose {{ docker_compose_params_http }} up -d --quiet-pull"
+  args:
+    chdir: "{{ una_root }}"
+  when: docker_compose_params_http | default('') | length > 0

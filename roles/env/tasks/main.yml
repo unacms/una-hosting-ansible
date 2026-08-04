@@ -1,0 +1,70 @@
+---
+# Deploy: create/append .env and secret files (same paths as legacy SSH deploy)
+# Edit / enable-ssl: update host-related .env keys only
+
+- name: Write MySQL root password secret
+  when: una_action == 'deploy' and unaMysqlRootPassword is defined and unaMysqlRootPassword | length > 0
+  ansible.builtin.copy:
+    content: "{{ unaMysqlRootPassword }}"
+    dest: "{{ una_root }}/.sec_mysql_root_password"
+    mode: '0600'
+
+- name: Write MySQL UNA password secret
+  when: una_action == 'deploy' and unaDbPwd is defined and unaDbPwd | length > 0
+  ansible.builtin.copy:
+    content: "{{ unaDbPwd }}"
+    dest: "{{ una_root }}/.sec_mysql_una_password"
+    mode: '0600'
+
+- name: Write Grafana password secret
+  when: una_action == 'deploy' and grafanaPwd is defined and grafanaPwd | length > 0
+  ansible.builtin.copy:
+    content: "{{ grafanaPwd }}"
+    dest: "{{ una_root }}/.sec_grafana_password"
+    mode: '0600'
+
+- name: Ensure .env exists on deploy
+  when: una_action == 'deploy'
+  ansible.builtin.file:
+    path: "{{ una_root }}/.env"
+    state: touch
+    mode: '0600'
+    modification_time: preserve
+    access_time: preserve
+
+- name: Set deploy .env entries
+  when: una_action == 'deploy' and item.value is defined and item.value | string | length > 0
+  ansible.builtin.lineinfile:
+    path: "{{ una_root }}/.env"
+    regexp: "^{{ item.key }}="
+    line: "{{ item.key }}={{ item.value | to_json }}"
+    create: true
+    mode: '0600'
+  loop:
+    - { key: UNA_ZIP_DOWNLOAD_URL, value: "{{ unaZipDownloadUrl | default('') }}" }
+    - { key: UNA_ZIP_FOLDER, value: "{{ unaZipFolder | default('') }}" }
+    - { key: UNA_SITE_TITLE, value: "{{ unaSiteTitle | default('') }}" }
+    - { key: UNA_SITE_EMAIL, value: "{{ unaSiteEmail | default('') }}" }
+    - { key: UNA_ADMIN_EMAIL, value: "{{ unaAdminEmail | default('') }}" }
+    - { key: UNA_ADMIN_PWD, value: "{{ unaAdminPwd | default('') }}" }
+    - { key: UNA_KEY, value: "{{ unaKey | default('') }}" }
+    - { key: UNA_SECRET, value: "{{ unaSecret | default('') }}" }
+    - { key: UNA_HTTP_HOST, value: "{{ host | default('') }}" }
+    - { key: NEO_UNA_API_KEY, value: "{{ neoUnaApiKey | default('') }}" }
+    - { key: NEO_UNA_URL, value: "{{ neoUnaUrl | default('') }}" }
+
+- name: Update UNA_HTTP_HOST in .env
+  when: una_action != 'deploy' and host is defined and host | length > 0
+  ansible.builtin.lineinfile:
+    path: "{{ una_root }}/.env"
+    regexp: '^UNA_HTTP_HOST='
+    line: "UNA_HTTP_HOST={{ host | to_json }}"
+    create: false
+
+- name: Update NEO_UNA_URL in .env
+  when: una_action != 'deploy' and neoUnaUrl is defined and neoUnaUrl | length > 0
+  ansible.builtin.lineinfile:
+    path: "{{ una_root }}/.env"
+    regexp: '^NEO_UNA_URL='
+    line: "NEO_UNA_URL={{ neoUnaUrl | to_json }}"
+    create: false

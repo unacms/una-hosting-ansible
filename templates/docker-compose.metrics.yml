@@ -1,0 +1,76 @@
+services:
+    victoriametrics:
+        image: victoriametrics/victoria-metrics:latest
+        labels:
+            - "promtail.job=victoriametrics"
+        command:
+            - "-storageDataPath=/victoria-metrics-data"
+            - "-retentionPeriod=3d"
+            - "-memory.allowedPercent=20"
+            - "-promscrape.config=/etc/victoriametrics/promscrape.yml"
+        volumes:
+            - victoriametricsdata:/victoria-metrics-data
+            - ./cnf/victoriametrics-promscrape.yml:/etc/victoriametrics/promscrape.yml:ro
+        networks:
+            - internal
+        restart: always
+
+    node-exporter:
+        image: prom/node-exporter:latest
+        labels:
+            - "promtail.job=node-exporter"
+        command:
+            - "--path.procfs=/host/proc"
+            - "--path.sysfs=/host/sys"
+            - "--path.rootfs=/rootfs"
+            - "--collector.disable-defaults"
+            - "--collector.cpu"
+            - "--collector.meminfo"
+            - "--collector.filesystem"
+            - "--collector.loadavg"
+            - "--collector.stat"
+            - "--collector.time"
+            - "--collector.uname"
+            - "--collector.filesystem.mount-points-exclude=^/(dev|proc|sys|run|var/lib/docker/.+|var/lib/containers/.+)($|/)"
+            - "--collector.filesystem.fs-types-exclude=^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|mqueue|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|sysfs|tracefs)$"
+        volumes:
+            - /proc:/host/proc:ro
+            - /sys:/host/sys:ro
+            - /:/rootfs:ro,rslave
+        networks:
+            - internal
+        restart: always
+
+    cadvisor:
+        image: gcr.io/cadvisor/cadvisor:latest
+        labels:
+            - "promtail.job=cadvisor"
+        privileged: true
+        mem_limit: 128m
+        cpus: "0.25"
+        command:
+            - "--docker_only=true"
+            - "--housekeeping_interval=60s"
+            - "--max_housekeeping_interval=120s"
+            - "--allow_dynamic_housekeeping=false"
+            - "--storage_duration=1m"
+            - "--application_metrics_count_limit=0"
+            - "--disable_root_cgroup_stats=true"
+            - "--event_storage_event_limit=default=0"
+            - "--event_storage_age_limit=default=0"
+            - "--store_container_labels=false"
+            - "--enable_metrics=cpu,memory"
+        devices:
+            - /dev/kmsg:/dev/kmsg
+        volumes:
+            - /:/rootfs:ro
+            - /var/run:/var/run:ro
+            - /sys:/sys:ro
+            - /var/lib/docker:/var/lib/docker:ro
+            - /dev/disk:/dev/disk:ro
+        networks:
+            - internal
+        restart: always
+
+volumes:
+    victoriametricsdata: {}
