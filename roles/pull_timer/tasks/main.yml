@@ -21,14 +21,14 @@
     src: una-ansible-pull.service.j2
     dest: /etc/systemd/system/una-ansible-pull.service
     mode: '0644'
-  notify: Reload systemd for una-ansible-pull
+  notify: Reload and restart una-ansible-pull timer
 
 - name: Install una-ansible-pull systemd timer
   ansible.builtin.template:
     src: una-ansible-pull.timer.j2
     dest: /etc/systemd/system/una-ansible-pull.timer
     mode: '0644'
-  notify: Reload systemd for una-ansible-pull
+  notify: Reload and restart una-ansible-pull timer
 
 - name: Enable and start una-ansible-pull.timer
   ansible.builtin.systemd:

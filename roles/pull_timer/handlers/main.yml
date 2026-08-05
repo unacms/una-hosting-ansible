@@ -1,4 +1,7 @@
 ---
-- name: Reload systemd for una-ansible-pull
+- name: Reload and restart una-ansible-pull timer
   ansible.builtin.systemd:
+    name: una-ansible-pull.timer
+    state: restarted
+    enabled: true
     daemon_reload: true
