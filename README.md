@@ -11,7 +11,7 @@ referenced by the worker via `U_ANSIBLE_REPO`.
 - `roles/files` — template configs / neo / compose files (`--tags files`)
 - `roles/env` — `/srv/una/.env` and `.sec_*` secrets (`--tags env`)
 - `roles/compose` — docker-compose down / pull / up (`--tags compose`)
-- `roles/pull_timer` — systemd timer 3×/day with 8h random delay (`--tags timer`)
+- `roles/pull_timer` — systemd timer (`--tags timer`)
 - `templates/` — Jinja2 templates (same paths under `/srv/una` as legacy deploy)
 
 ## Tags
@@ -27,9 +27,7 @@ referenced by the worker via `U_ANSIBLE_REPO`.
 
 ## Systemd timer
 
-After deploy, `una-ansible-pull.timer` runs **3 times per day** (base times
-00:00, 08:00, 16:00 UTC/local) each with `RandomizedDelaySec=8h` — roughly
-once per 8h window at a random time:
+After deploy, `una-ansible-pull.timer` runs periodically to keep the deployment synced with the repository.
 
 1. Cheap `git fetch` / checkout of the ansible repo
 2. If HEAD is unchanged since last apply → exit immediately

@@ -1,5 +1,5 @@
 ---
-# Install periodic ansible-pull via systemd (3×/day, random delay within each 8h window).
+# Install periodic ansible-pull via systemd.
 # Script pulls git cheaply; full files/env/compose apply only when HEAD changes.
 # Requires ansible_repo (and persisted extra-vars) from the worker.
 

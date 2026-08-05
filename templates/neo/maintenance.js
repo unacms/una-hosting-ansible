@@ -8,7 +8,7 @@ http.createServer((req, res) => {
     if (!ready) {
         res.writeHead(503, {'Content-Type': 'text/html; charset=utf-8'});
         res.end(`
-            <h1>🚀 Starting NEO...</h1>
+            <h1>🚀 Starting...</h1>
             <script>
               setTimeout(()=>location.reload(),3000)
             </script>
