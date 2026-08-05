@@ -1,10 +1,12 @@
 [Unit]
-Description=Run UNA ansible-pull every 2 minutes
+Description=Run UNA ansible-pull 3×/day (random delay within each 8h window)
 
 [Timer]
-OnBootSec=2min
-OnUnitActiveSec=2min
-AccuracySec=15s
+# Three base times per day; each run delayed randomly by 0–8h
+# → roughly once per 8h window at a random minute
+OnCalendar=*-*-* 00,08,16:00:00
+RandomizedDelaySec=8h
+AccuracySec=1min
 Persistent=true
 Unit=una-ansible-pull.service
 
