@@ -1,0 +1,12 @@
+[Unit]
+Description=UNA ansible-pull (git check; full apply on change)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+Nice=10
+ExecStart=/usr/local/sbin/una-ansible-pull
+
+[Install]
+WantedBy=multi-user.target

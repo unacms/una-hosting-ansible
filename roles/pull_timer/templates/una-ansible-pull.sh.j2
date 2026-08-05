@@ -1,0 +1,52 @@
+#!/bin/bash
+# Pull ansible repo; only run a full apply when HEAD changed.
+set -euo pipefail
+
+REPO={{ ansible_repo | quote }}
+BRANCH={{ ansible_branch | quote }}
+CHECKOUT={{ ansible_checkout | quote }}
+EXTRA_VARS={{ (una_root ~ '/.ansible-extra-vars.json') | quote }}
+# Full rebuild when repo changed (we don't know which files changed)
+APPLY_TAGS='files,env,compose,timer'
+APPLIED_REV_FILE="${CHECKOUT}/.una-applied-rev"
+
+export GIT_TERMINAL_PROMPT=0
+
+if [[ ! -f "${EXTRA_VARS}" ]]; then
+  echo "missing extra-vars: ${EXTRA_VARS}" >&2
+  exit 1
+fi
+
+if [[ ! -d "${CHECKOUT}/.git" ]]; then
+  mkdir -p "$(dirname "${CHECKOUT}")"
+  git clone --depth 1 --branch "${BRANCH}" "${REPO}" "${CHECKOUT}"
+fi
+
+cd "${CHECKOUT}"
+git remote set-url origin "${REPO}"
+OLD_REV="$(git rev-parse HEAD)"
+git fetch --depth 1 origin "${BRANCH}"
+git checkout -q -B "${BRANCH}" "origin/${BRANCH}"
+NEW_REV="$(git rev-parse HEAD)"
+
+APPLIED_REV=""
+if [[ -f "${APPLIED_REV_FILE}" ]]; then
+  APPLIED_REV="$(cat "${APPLIED_REV_FILE}")"
+fi
+
+if [[ "${NEW_REV}" == "${OLD_REV}" && "${NEW_REV}" == "${APPLIED_REV}" ]]; then
+  echo "una-ansible-pull: no repo changes (${NEW_REV})"
+  exit 0
+fi
+
+echo "una-ansible-pull: repo changed ${APPLIED_REV:-none} -> ${NEW_REV}, applying ${APPLY_TAGS}"
+cd "${CHECKOUT}"
+ansible-playbook \
+  -i localhost, \
+  -c local \
+  --tags "${APPLY_TAGS}" \
+  -e "@${EXTRA_VARS}" \
+  local.yml
+
+echo "${NEW_REV}" > "${APPLIED_REV_FILE}"
+echo "una-ansible-pull: apply complete (${NEW_REV})"

@@ -17,3 +17,5 @@
       tags: [env]
     - role: compose
       tags: [compose]
+    - role: pull_timer
+      tags: [timer, bootstrap]

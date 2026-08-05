@@ -1,0 +1,44 @@
+---
+# Install periodic ansible-pull via systemd (every 2 minutes).
+# Script pulls git cheaply; full files/env/compose apply only when HEAD changes.
+# Requires ansible_repo (and persisted extra-vars) from the worker.
+
+- name: Require ansible_repo for pull timer
+  ansible.builtin.assert:
+    that:
+      - ansible_repo is defined
+      - ansible_repo | length > 0
+    fail_msg: "ansible_repo must be set (worker U_ANSIBLE_REPO) to install the pull timer"
+
+- name: Install una-ansible-pull wrapper script
+  ansible.builtin.template:
+    src: una-ansible-pull.sh.j2
+    dest: /usr/local/sbin/una-ansible-pull
+    mode: '0755'
+
+- name: Install una-ansible-pull systemd service
+  ansible.builtin.template:
+    src: una-ansible-pull.service.j2
+    dest: /etc/systemd/system/una-ansible-pull.service
+    mode: '0644'
+  notify: Reload systemd for una-ansible-pull
+
+- name: Install una-ansible-pull systemd timer
+  ansible.builtin.template:
+    src: una-ansible-pull.timer.j2
+    dest: /etc/systemd/system/una-ansible-pull.timer
+    mode: '0644'
+  notify: Reload systemd for una-ansible-pull
+
+- name: Enable and start una-ansible-pull.timer
+  ansible.builtin.systemd:
+    name: una-ansible-pull.timer
+    enabled: true
+    state: started
+    daemon_reload: true
+
+- name: Record current checkout revision as applied
+  ansible.builtin.shell: git rev-parse HEAD > {{ ansible_checkout }}/.una-applied-rev
+  args:
+    chdir: "{{ ansible_checkout }}"
+  changed_when: true

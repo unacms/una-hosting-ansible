@@ -15,3 +15,7 @@ docker_compose_params: ''
 docker_compose_params_all: ''
 docker_compose_params_http: ''
 una_root: /srv/una
+# Periodic ansible-pull timer (set by worker from U_ANSIBLE_*)
+ansible_repo: ''
+ansible_branch: main
+ansible_checkout: /var/lib/una-ansible

@@ -1,0 +1,4 @@
+---
+- name: Reload systemd for una-ansible-pull
+  ansible.builtin.systemd:
+    daemon_reload: true
