@@ -1,6 +1,6 @@
 services:
     victoriametrics:
-        image: victoriametrics/victoria-metrics:latest
+        image: victoriametrics/victoria-metrics:v1.148.0
         labels:
             - "promtail.job=victoriametrics"
         command:
@@ -16,7 +16,7 @@ services:
         restart: always
 
     node-exporter:
-        image: prom/node-exporter:latest
+        image: prom/node-exporter:v1.12.1
         labels:
             - "promtail.job=node-exporter"
         command:
@@ -42,7 +42,7 @@ services:
         restart: always
 
     cadvisor:
-        image: gcr.io/cadvisor/cadvisor:latest
+        image: ghcr.io/google/cadvisor:0.60.5 # https://github.com/google/cadvisor/releases
         labels:
             - "promtail.job=cadvisor"
         privileged: true

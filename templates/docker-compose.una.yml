@@ -1,6 +1,6 @@
 services:
     una:
-        image: unaio/una:latest
+        image: unaio/una:14.0.0
         labels:
             - "promtail.job=una"
             - "traefik.enable=true"

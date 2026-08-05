@@ -1,6 +1,6 @@
 services:
     mysql:
-        image: mariadb:latest
+        image: mariadb:12.3.2-ubi10
         labels:
             - "promtail.job=mysql"
         restart: always

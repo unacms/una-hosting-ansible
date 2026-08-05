@@ -36,7 +36,7 @@ services:
         networks:
             - proxy
     soketi:
-        image: quay.io/soketi/soketi:e446df8e3e06b8430d75cf58555bc409bf240a4e-16-alpine
+        image: quay.io/soketi/soketi:e446df8e3e06b8430d75cf58555bc409bf240a4e-16-alpine # https://quay.io/repository/soketi/soketi?tab=tags
         labels:
             - "traefik.enable=true"
             - "traefik.http.routers.soketi.rule=Host(`{{ host }}`) && PathPrefix(`/app`)"

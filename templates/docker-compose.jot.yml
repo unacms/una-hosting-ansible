@@ -1,6 +1,6 @@
 services:
     jot:
-        image: unaio/jot-server:latest
+        image: unaio/jot-server:2.0.2
         labels:
             - "traefik.enable=true"
             - "traefik.http.routers.jot.rule=Host(`{{ host }}`) && PathPrefix(`/primus`)"

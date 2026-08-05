@@ -1,6 +1,6 @@
 services:
     phpmyadmin:
-        image: phpmyadmin
+        image: phpmyadmin:5.2.3-apache
         labels:
             - "traefik.enable=true"
             - "traefik.http.routers.phpmyadmin.rule=Host(`{{ host }}`) && PathPrefix(`/phpmyadmin`)"

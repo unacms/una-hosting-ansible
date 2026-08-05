@@ -1,6 +1,6 @@
 services:
     grafana:
-        image: grafana/grafana:latest
+        image: grafana/grafana:13.1.2-ubuntu
         labels:
             - "traefik.enable=true"
             - "traefik.http.routers.grafana.rule=Host(`{{ host }}`) && PathPrefix(`/grafana`)"

@@ -1,6 +1,6 @@
 services:
     loki:
-        image: grafana/loki:latest
+        image: grafana/loki:3.6.14
         labels:
             - "promtail.job=loki"
         command: -config.file=/etc/loki/local-config.yaml
@@ -10,7 +10,7 @@ services:
             - internal
 
     promtail:
-        image: grafana/promtail:latest
+        image: grafana/promtail:3.6.11
         labels:
             - "promtail.job=promtail"
         depends_on:
