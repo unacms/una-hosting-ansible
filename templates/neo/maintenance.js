@@ -10,7 +10,7 @@ http.createServer((req, res) => {
         res.end(`
             <h1>🚀 Starting...</h1>
             <script>
-              setTimeout(()=>location.reload(),3000)
+              setTimeout(()=>location.reload(),4000)
             </script>
         `);
     }
