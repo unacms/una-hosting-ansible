@@ -1,7 +1,4 @@
 import { staticDefault } from 'app/default/static';
-import Svg, { Path, Circle, Ellipse } from 'react-native-svg'
-import SvgFile from 'app/ui/molecules/svg-file'
-import { Text } from 'app/design/typography'
 
 const Logo = ({ mode = 'adaptive', colorMode = 'auto' }) => {
     return (
