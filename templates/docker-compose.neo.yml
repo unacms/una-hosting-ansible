@@ -1,6 +1,6 @@
 services:
     neo:
-        image: unaio/neo:04dd2e3
+        image: unaio/neo:dadaecd
         labels:
             - "promtail.job=neo"
             - "traefik.enable=true"
