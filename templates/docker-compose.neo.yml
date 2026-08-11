@@ -21,7 +21,7 @@ services:
             sh -c "
                 node /tmp/maintenance.js &
                 PID_MAINTENANCE=$$!;
-                yarn --cwd apps/next build;
+                NODE_OPTIONS='--max-old-space-size=1536' yarn --cwd apps/next build;
                 kill -9 $$PID_MAINTENANCE || true;
                 wait $$PID_MAINTENANCE || true;
                 exec yarn --cwd apps/next start
