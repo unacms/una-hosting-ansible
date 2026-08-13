@@ -5,7 +5,7 @@
   become: true
   gather_facts: true
   vars:
-    playbook_version: "4.0.4-0"
+    playbook_version: "4.0.4-1"
   # Extra vars (including secrets) are supplied by the worker via:
   #   ansible-pull ... -e @/srv/una/.ansible-extra-vars.json
   roles:

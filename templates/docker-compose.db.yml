@@ -5,10 +5,10 @@ services:
             - "promtail.job=mysql"
         restart: always
         environment:
-            MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
-            MYSQL_USER: 'una'
-            MYSQL_PASSWORD_FILE: /run/secrets/mysql_una_password
-            MYSQL_DATABASE: 'una'
+            MARIADB_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
+            MARIADB_USER: 'una'
+            MARIADB_PASSWORD_FILE: /run/secrets/mysql_una_password
+            MARIADB_DATABASE: 'una'
         secrets:
             - mysql_root_password
             - mysql_una_password
